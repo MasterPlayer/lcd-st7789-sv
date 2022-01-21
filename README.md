@@ -2,6 +2,35 @@
  simple demo hardware code for implement access to ST7789 LCD display from FPGA
 
 
+## Eng 
+
+LCD display based upon ST7789 IC
+Resolution : 240x240 pixels
+
+CHIP SELECT in zero constantly, control display only for control CLK signal
+
+Interface over Display and FPGA - SPI without ChipSelect
+
+Two Components realize access to display : 
+1. st7789_driver - implement serial access with SPI to display for control them
+2. st7789_mgr - command processor for initialize data transmission and command transmission for driver on byte level
+
+Components works on AXI-Stream support
+
+mgr perform initialize display by sending required commands. For this version user can perform only one command - fill display RGB colors and internal fsm changes this colors for next time
+
+Initialize includes next steps : 
+1. Send command RESET_SW(0x01)
+2. Pause
+3. Send command SLEEP_OUT(0x11)
+4. Send command INV_ON(0x21) 
+5. Send command DISP_ON(0x29)
+6. Send command RASET(0x2B)
+7. Send command CASET(0x2A)
+
+Data transmission is possible up to 75 Mhz (SCL clock period). When exceeded this frequency, transmitted data was corrupted, and display filled with impure color
+
+
 ## Rus 
 
 Дисплей используется на основе контроллера ST7789. 
@@ -34,33 +63,6 @@ mgr сейчас выполняет инициализацию дисплея о
 
 
 
-## Eng 
-
-LCD display based upon ST7789 IC
-Resolution : 240x240 pixels
-
-CHIP SELECT in zero constantly, control display only for control CLK signal
-
-Interface over Display and FPGA - SPI without ChipSelect
-
-Two Components realize access to display : 
-1. st7789_driver - implement serial access with SPI to display for control them
-2. st7789_mgr - command processor for initialize data transmission and command transmission for driver on byte level
-
-Components works on AXI-Stream support
-
-mgr perform initialize display by sending required commands. For this version user can perform only one command - fill display RGB colors and internal fsm changes this colors for next time
-
-Initialize includes next steps : 
-1. Send command RESET_SW(0x01)
-2. Pause
-3. Send command SLEEP_OUT(0x11)
-4. Send command INV_ON(0x21) 
-5. Send command DISP_ON(0x29)
-6. Send command RASET(0x2B)
-7. Send command CASET(0x2A)
-
-Data transmission is possible up to 75 Mhz (SCL clock period). When exceeded this frequency, transmitted data was corrupted, and display filled with impure color
 
 # Versions 
 1.0 Initial version
